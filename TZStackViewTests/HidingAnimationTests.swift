@@ -34,88 +34,88 @@ class HidingAnimationTests: TZStackViewTestCase {
     
     // If you are not animating the hidden property, the hidden property should be set immediately
     func testNonAnimatingHidden() {
-        let expectation = expectationWithDescription("delay")
+        let expectation = self.expectation(description: "delay")
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            self.uiTestView.hidden = true
-            self.tzTestView.hidden = true
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.uiTestView.isHidden = true
+            self.tzTestView.isHidden = true
             
-            XCTAssert(self.uiTestView.hidden)
-            XCTAssert(self.tzTestView.hidden)
-            XCTAssert(self.uiTestView.layer.hidden)
-            XCTAssert(self.tzTestView.layer.hidden)
+            XCTAssert(self.uiTestView.isHidden)
+            XCTAssert(self.tzTestView.isHidden)
+            XCTAssert(self.uiTestView.layer.isHidden)
+            XCTAssert(self.tzTestView.layer.isHidden)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.2) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     // If you are not animating the hidden property, the hidden property should be set immediately
     func testNonAnimatingHiddenWithOther() {
-        let expectation = expectationWithDescription("delay")
+        let expectation = self.expectation(description: "delay")
         
-        uiTestView.backgroundColor = UIColor.clearColor()
-        tzTestView.backgroundColor = UIColor.clearColor()
-        UIView.animateWithDuration(2) {
-            self.uiTestView.backgroundColor = UIColor.greenColor()
-            self.tzTestView.backgroundColor = UIColor.greenColor()
+        uiTestView.backgroundColor = UIColor.clear
+        tzTestView.backgroundColor = UIColor.clear
+        UIView.animate(withDuration: 2) {
+            self.uiTestView.backgroundColor = UIColor.green
+            self.tzTestView.backgroundColor = UIColor.green
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            self.uiTestView.hidden = true
-            self.tzTestView.hidden = true
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.uiTestView.isHidden = true
+            self.tzTestView.isHidden = true
             
-            XCTAssert(self.uiTestView.hidden)
-            XCTAssert(self.tzTestView.hidden)
-            XCTAssert(self.uiTestView.layer.hidden)
-            XCTAssert(self.tzTestView.layer.hidden)
+            XCTAssert(self.uiTestView.isHidden)
+            XCTAssert(self.tzTestView.isHidden)
+            XCTAssert(self.uiTestView.layer.isHidden)
+            XCTAssert(self.tzTestView.layer.isHidden)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.2) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
-    func animationHiddenWithDelay(delay: NSTimeInterval) {
-        let expectation = expectationWithDescription("delay")
+    func animationHiddenWithDelay(_ delay: TimeInterval) {
+        let expectation = self.expectation(description: "delay")
         
         let duration = 1.0
         
-        UIView.animateWithDuration(duration, delay: delay, options: [],
+        UIView.animate(withDuration: duration, delay: delay, options: [],
             animations: { () -> Void in
-                self.uiTestView.hidden = true
-                self.tzTestView.hidden = true
+                self.uiTestView.isHidden = true
+                self.tzTestView.isHidden = true
                 
                 // Note uiTestView.hidden == true, tzTestView.hidden == false
                 
                 // The presentation should not be hidden.
-                XCTAssert(!self.uiTestView.layer.hidden)
-                XCTAssert(!self.tzTestView.layer.hidden)
+                XCTAssert(!self.uiTestView.layer.isHidden)
+                XCTAssert(!self.tzTestView.layer.isHidden)
                 
             }, completion: { _ in
-                XCTAssert(self.uiTestView.hidden)
-                XCTAssert(self.tzTestView.hidden)
-                XCTAssert(self.uiTestView.layer.hidden)
-                XCTAssert(self.tzTestView.layer.hidden)
+                XCTAssert(self.uiTestView.isHidden)
+                XCTAssert(self.tzTestView.isHidden)
+                XCTAssert(self.uiTestView.layer.isHidden)
+                XCTAssert(self.tzTestView.layer.isHidden)
         })
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64((duration + delay + 0.2) * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            XCTAssert(self.uiTestView.hidden)
-            XCTAssert(self.tzTestView.hidden)
-            XCTAssert(self.uiTestView.layer.hidden)
-            XCTAssert(self.tzTestView.layer.hidden)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration + delay + 0.2) {
+            XCTAssert(self.uiTestView.isHidden)
+            XCTAssert(self.tzTestView.isHidden)
+            XCTAssert(self.uiTestView.layer.isHidden)
+            XCTAssert(self.tzTestView.layer.isHidden)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64((duration + delay + 0.4) * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration + delay + 0.4) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     func testAnimatingHidden() {
@@ -127,135 +127,135 @@ class HidingAnimationTests: TZStackViewTestCase {
     }
     
     func testAnimatingHiddenWithOther() {
-        let expectation = expectationWithDescription("delay")
+        let expectation = self.expectation(description: "delay")
         
-        UIView.animateWithDuration(1) {
-            self.uiTestView.hidden = true
-            self.tzTestView.hidden = true
+        UIView.animate(withDuration: 1) {
+            self.uiTestView.isHidden = true
+            self.tzTestView.isHidden = true
         }
         
-        uiTestView.backgroundColor = UIColor.clearColor()
-        tzTestView.backgroundColor = UIColor.clearColor()
-        UIView.animateWithDuration(2) {
-            self.uiTestView.backgroundColor = UIColor.greenColor()
-            self.tzTestView.backgroundColor = UIColor.greenColor()
+        uiTestView.backgroundColor = UIColor.clear
+        tzTestView.backgroundColor = UIColor.clear
+        UIView.animate(withDuration: 2) {
+            self.uiTestView.backgroundColor = UIColor.green
+            self.tzTestView.backgroundColor = UIColor.green
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.2) {
             // The view should be hidden after the hiding animation completes even if there are still other animations
-            XCTAssert(self.uiTestView.hidden)
-            XCTAssert(self.tzTestView.hidden)
-            XCTAssert(self.uiTestView.layer.hidden)
-            XCTAssert(self.tzTestView.layer.hidden)
+            XCTAssert(self.uiTestView.isHidden)
+            XCTAssert(self.tzTestView.isHidden)
+            XCTAssert(self.uiTestView.layer.isHidden)
+            XCTAssert(self.tzTestView.layer.isHidden)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.2) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     // The completion callback of an animation should be called
     func testHidingAnimationCallback() {
-        let expectation = expectationWithDescription("delay")
+        let expectation = self.expectation(description: "delay")
         
         var uiCompletionCalled = false
         var tzCompletionCalled = false
         
-        UIView.animateWithDuration(1,
+        UIView.animate(withDuration: 1,
             animations: {
-                self.uiTestView.hidden = true
+                self.uiTestView.isHidden = true
             }, completion: { _ in
                 uiCompletionCalled = true
         })
         
-        UIView.animateWithDuration(1,
+        UIView.animate(withDuration: 1,
             animations: {
-                self.tzTestView.hidden = true
+                self.tzTestView.isHidden = true
             }, completion: { _ in
                 tzCompletionCalled = true
         })
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.2) {
             XCTAssert(uiCompletionCalled)
             XCTAssert(tzCompletionCalled)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.4 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.4) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     // The completion callback of an animation should be called when the animation is canceled
     func testHidingAnimationCallbackCancel() {
-        let expectation = expectationWithDescription("delay")
+        let expectation = self.expectation(description: "delay")
         
         var uiCompletionCalled = false
         var tzCompletionCalled = false
         
-        UIView.animateWithDuration(1,
+        UIView.animate(withDuration: 1,
             animations: {
-                self.uiTestView.hidden = true
+                self.uiTestView.isHidden = true
             }, completion: { finished in
                 uiCompletionCalled = true
                 XCTAssert(!finished)
         })
         
-        UIView.animateWithDuration(1,
+        UIView.animate(withDuration: 1,
             animations: {
-                self.tzTestView.hidden = true
+                self.tzTestView.isHidden = true
             }, completion: { finished in
                 tzCompletionCalled = true
                 XCTAssert(!finished)
         })
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
             // This will cancel the animation
             self.uiStackView.removeFromSuperview()
             self.tzStackView.removeFromSuperview()
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.7 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.7) {
             XCTAssert(uiCompletionCalled)
             XCTAssert(tzCompletionCalled)
-            XCTAssert(self.uiTestView.hidden)
-            XCTAssert(self.tzTestView.hidden)
+            XCTAssert(self.uiTestView.isHidden)
+            XCTAssert(self.tzTestView.isHidden)
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.4 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.4) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     // When set the hidden property in the middle of an animation, the hidden property should be updated eventually
-    func hidingAnimationSetAgainFirstHidden(firstHidden: Bool, withAnimation: Bool) {
-        let expectation = expectationWithDescription("delay")
+    func hidingAnimationSetAgainFirstHidden(_ firstHidden: Bool, withAnimation: Bool) {
+        let expectation = self.expectation(description: "delay")
         
-        uiTestView.hidden = firstHidden
-        tzTestView.hidden = firstHidden
+        uiTestView.isHidden = firstHidden
+        tzTestView.isHidden = firstHidden
         
-        UIView.animateWithDuration(2) {
-            self.uiTestView.hidden = !firstHidden
-            self.tzTestView.hidden = !firstHidden
+        UIView.animate(withDuration: 2) {
+            self.uiTestView.isHidden = !firstHidden
+            self.tzTestView.isHidden = !firstHidden
         }
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
             if !withAnimation {
-                self.uiTestView.hidden = firstHidden
-                self.tzTestView.hidden = firstHidden
+                self.uiTestView.isHidden = firstHidden
+                self.tzTestView.isHidden = firstHidden
             } else {
-                UIView.animateWithDuration(2) {
-                    self.uiTestView.hidden = firstHidden
-                    self.tzTestView.hidden = firstHidden
+                UIView.animate(withDuration: 2) {
+                    self.uiTestView.isHidden = firstHidden
+                    self.tzTestView.isHidden = firstHidden
                     
                     // Animating, the presentation is not hidden
-                    XCTAssert(!self.uiTestView.layer.hidden)
-                    XCTAssert(!self.tzTestView.layer.hidden)
+                    XCTAssert(!self.uiTestView.layer.isHidden)
+                    XCTAssert(!self.tzTestView.layer.isHidden)
                 }
             }
             
@@ -263,16 +263,16 @@ class HidingAnimationTests: TZStackViewTestCase {
         }
         
         let endTime = !withAnimation ? 2.2 : 3.2
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(endTime * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            XCTAssert(self.uiTestView.hidden == firstHidden)
-            XCTAssert(self.tzTestView.hidden == firstHidden)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + endTime) {
+            XCTAssert(self.uiTestView.isHidden == firstHidden)
+            XCTAssert(self.tzTestView.isHidden == firstHidden)
         }
                 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64((endTime + 0.2) * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + endTime + 0.2) {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(100, handler: nil)
+        waitForExpectations(timeout: 100, handler: nil)
     }
     
     func testHidingAnimationSetAgainFirstNotHidden() {

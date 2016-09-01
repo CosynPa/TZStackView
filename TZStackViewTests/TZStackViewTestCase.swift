@@ -11,12 +11,9 @@ import XCTest
 
 @testable import TZStackView
 
-func delay(delay:Double, closure:()->()) {
-    dispatch_after(
-        dispatch_time(
-            DISPATCH_TIME_NOW,
-            Int64(delay * Double(NSEC_PER_SEC))
-        ), dispatch_get_main_queue(), closure)
+func delay(_ delay:Double, closure:@escaping ()->()) {
+    DispatchQueue.main.asyncAfter(
+        deadline: DispatchTime.now() + delay, execute: closure)
 }
 
 class TZStackViewTestCase: XCTestCase {
@@ -24,7 +21,7 @@ class TZStackViewTestCase: XCTestCase {
     var uiStackView: UIStackView!
     var tzStackView: TZStackView!
 
-    func recreateStackViews(createSubviews: () -> [UIView]) {
+    func recreateStackViews(_ createSubviews: () -> [UIView]) {
         // don't use old views otherwise some old spacer views and constraints are left
         // don't remove old view to avoid layout engine internal error
         
@@ -34,7 +31,7 @@ class TZStackViewTestCase: XCTestCase {
         tzStackView = TZStackView(arrangedSubviews: createSubviews())
         tzStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let window = UIApplication.sharedApplication().windows[0]
+        let window = UIApplication.shared.windows[0]
         window.addSubview(uiStackView)
         window.addSubview(tzStackView)
     }
@@ -59,7 +56,7 @@ class TZStackViewTestCase: XCTestCase {
         }
     }
     
-    func verifyConstraints(log log: Bool = false) {
+    func verifyConstraints(log: Bool = false) {
         // Force constraints to be created
         uiStackView.setNeedsUpdateConstraints()
         uiStackView.updateConstraintsIfNeeded()
@@ -73,7 +70,7 @@ class TZStackViewTestCase: XCTestCase {
         // Assert same constraints are created
         assertSameConstraints(nonMarginsLayoutConstraints(uiStackView), nonMarginsLayoutConstraints(tzStackView))
         
-        for (index, uiArrangedSubview) in uiStackView.arrangedSubviews.enumerate() {
+        for (index, uiArrangedSubview) in uiStackView.arrangedSubviews.enumerated() {
             let tzArrangedSubview = tzStackView.arrangedSubviews[index]
             
             let uiConstraints = nonContentSizeLayoutConstraints(uiArrangedSubview)
@@ -84,11 +81,11 @@ class TZStackViewTestCase: XCTestCase {
         }
     }
     
-    private func nonContentSizeLayoutConstraints(view: UIView) -> [NSLayoutConstraint] {
-        return view.constraints.filter({ "\($0.dynamicType)" != "NSContentSizeLayoutConstraint" })
+    fileprivate func nonContentSizeLayoutConstraints(_ view: UIView) -> [NSLayoutConstraint] {
+        return view.constraints.filter({ "\(type(of: $0))" != "NSContentSizeLayoutConstraint" })
     }
     
-    private func nonMarginsLayoutConstraints(view: UIView) -> [NSLayoutConstraint] {
+    fileprivate func nonMarginsLayoutConstraints(_ view: UIView) -> [NSLayoutConstraint] {
         return view.constraints.filter { aConstraint in
             if let identifier = aConstraint.identifier {
                 return !identifier.hasSuffix("Margin-guide-constraint")
@@ -98,8 +95,8 @@ class TZStackViewTestCase: XCTestCase {
         }
     }
     
-    func assertSameConstraints(uiConstraints: [NSLayoutConstraint], _ tzConstraints: [NSLayoutConstraint]) {
-        func getGuides(constraints: [NSLayoutConstraint]) -> [NSObject] {
+    func assertSameConstraints(_ uiConstraints: [NSLayoutConstraint], _ tzConstraints: [NSLayoutConstraint]) {
+        func getGuides(_ constraints: [NSLayoutConstraint]) -> [NSObject] {
             var result = Set<NSObject>()
             
             for aConstraint in constraints {
@@ -108,7 +105,7 @@ class TZStackViewTestCase: XCTestCase {
                     result.insert(firstItem as! NSObject)
                 }
                 
-                if let secondItem = aConstraint.secondItem where secondItem is _TZSpacerView || secondItem is UILayoutGuide {
+                if let secondItem = aConstraint.secondItem , secondItem is _TZSpacerView || secondItem is UILayoutGuide {
                     result.insert(secondItem as! NSObject)
                 }
             }
@@ -121,8 +118,8 @@ class TZStackViewTestCase: XCTestCase {
         
         XCTAssertEqual(uiGuides.count, tzGuides.count, "Number of layout guides")
 
-        let uiGrouped = Array(uiConstraints.enumerate()).groupBy{ (index, constraint) in constraint.identifier ?? "" }
-        let tzGrouped = Array(tzConstraints.enumerate()).groupBy{ (index, constraint) in constraint.identifier ?? "" }
+        let uiGrouped = Array(uiConstraints.enumerated()).groupBy{ (index, constraint) in constraint.identifier ?? "" }
+        let tzGrouped = Array(tzConstraints.enumerated()).groupBy{ (index, constraint) in constraint.identifier ?? "" }
         
         identifierLoop: for (identifier, uiGroup) in uiGrouped {
             let tzIdentifier = identifier.hasPrefix("UI") ? "TZ" + String(identifier.characters.dropFirst("UI".characters.count)) : identifier
@@ -134,12 +131,12 @@ class TZStackViewTestCase: XCTestCase {
                
                 var tzGroupLeft = tzGroup
                 for (index, uiConstraint) in uiGroup { // note, the index is the index of uiConstraints, not uiGroup
-                    let tzIndex = tzGroupLeft.indexOf { (_, tzConstraint) in
+                    let tzIndex = tzGroupLeft.index { (_, tzConstraint) in
                         return isSameConstraint(uiConstraint, tzConstraint) || isSameConstraintFlipped(uiConstraint, tzConstraint)
                     }
                     
                     if let tzIndex = tzIndex {
-                        tzGroupLeft.removeAtIndex(tzIndex)
+                        tzGroupLeft.remove(at: tzIndex)
                     } else {
                         XCTAssert(false, "Constraints at index \(index) do not match\n== EXPECTED ==\n\(uiConstraint.readableString())\n\n== POSSIBLE ACTUAL ==\n\(tzConstraints[index].readableString())\n\n")
                         continue identifierLoop
@@ -160,7 +157,7 @@ class TZStackViewTestCase: XCTestCase {
         }
     }
     
-    private func isSameConstraint(layoutConstraint1: NSLayoutConstraint, _ layoutConstraint2: NSLayoutConstraint) -> Bool {
+    fileprivate func isSameConstraint(_ layoutConstraint1: NSLayoutConstraint, _ layoutConstraint2: NSLayoutConstraint) -> Bool {
         if !viewsEqual(layoutConstraint1.firstItem, layoutConstraint2.firstItem) {
             return false
         }
@@ -191,19 +188,19 @@ class TZStackViewTestCase: XCTestCase {
         return true
     }
     
-    private func isSameConstraintFlipped(layoutConstraint1: NSLayoutConstraint, _ layoutConstraint2: NSLayoutConstraint) -> Bool {
-        func flipRelation(relation: NSLayoutRelation) -> NSLayoutRelation {
+    fileprivate func isSameConstraintFlipped(_ layoutConstraint1: NSLayoutConstraint, _ layoutConstraint2: NSLayoutConstraint) -> Bool {
+        func flipRelation(_ relation: NSLayoutRelation) -> NSLayoutRelation {
             switch relation {
-            case .Equal:
-                return .Equal
-            case .GreaterThanOrEqual:
-                return .LessThanOrEqual
-            case .LessThanOrEqual:
-                return .GreaterThanOrEqual
+            case .equal:
+                return .equal
+            case .greaterThanOrEqual:
+                return .lessThanOrEqual
+            case .lessThanOrEqual:
+                return .greaterThanOrEqual
             }
         }
 
-        func flipConstraint(constraint: NSLayoutConstraint) -> NSLayoutConstraint {
+        func flipConstraint(_ constraint: NSLayoutConstraint) -> NSLayoutConstraint {
             guard constraint.multiplier != 0 else {
                 return constraint
             }
@@ -229,20 +226,20 @@ class TZStackViewTestCase: XCTestCase {
         return isSameConstraint(layoutConstraint1, flipConstraint(layoutConstraint2))
     }
 
-    private func printConstraints(constraints: [NSLayoutConstraint]) {
+    fileprivate func printConstraints(_ constraints: [NSLayoutConstraint]) {
         for constraint in constraints {
             print(constraint.readableString())
         }
     }
     
-    private func viewsEqual(object1: AnyObject?, _ object2: AnyObject?) -> Bool {
+    fileprivate func viewsEqual(_ object1: AnyObject?, _ object2: AnyObject?) -> Bool {
         if object1 == nil && object2 == nil {
             return true
         }
-        if let view1 = object1 as? TestView, view2 = object2 as? TestView where view1 == view2 {
+        if let view1 = object1 as? TestView, let view2 = object2 as? TestView , view1 == view2 {
             return true
         }
-        if let label1 = object1 as? TestLabel, label2 = object2 as? TestLabel where label1 == label2 {
+        if let label1 = object1 as? TestLabel, let label2 = object2 as? TestLabel , label1 == label2 {
             return true
         }
         if object1 is UIStackView && object2 is TZStackView {
@@ -252,43 +249,43 @@ class TZStackViewTestCase: XCTestCase {
             return true
         }
         // Wish I could assert more accurately than this
-        if let object1 = object1 as? UILayoutGuide, object2 = object2 as? _TZSpacerView
-            where isSameIdentifier(object1.identifier, object2.identifier) {
+        if let object1 = object1 as? UILayoutGuide, let object2 = object2 as? _TZSpacerView
+            , isSameIdentifier(object1.identifier, object2.identifier) {
             return true
         }
         // Wish I could assert more accurately than this
-        if let object1 = object1 as? _TZSpacerView, object2 = object2 as? UILayoutGuide
-            where isSameIdentifier(object1.identifier, object2.identifier) {
+        if let object1 = object1 as? _TZSpacerView, let object2 = object2 as? UILayoutGuide
+            , isSameIdentifier(object1.identifier, object2.identifier) {
             return true
         }
         return false
     }
     
-    private func isSameIdentifier(identifier1: String, _ identifier2: String) -> Bool {
-        func hasPrefix(str: String) -> Bool {
+    fileprivate func isSameIdentifier(_ identifier1: String, _ identifier2: String) -> Bool {
+        func hasPrefix(_ str: String) -> Bool {
             return str.hasPrefix("UI") || str.hasPrefix("TZ")
         }
         
-        func dropPrefix(str: String) -> String {
+        func dropPrefix(_ str: String) -> String {
             return String(str.characters.dropFirst("UI".characters.count))
         }
         
         return identifier1 == identifier2 || (hasPrefix(identifier1) && hasPrefix(identifier2) && dropPrefix(identifier1) == dropPrefix(identifier2))
     }
     
-    private func isSameIdentifier(identifier1: String?, _ identifier2: String?) -> Bool {
+    fileprivate func isSameIdentifier(_ identifier1: String?, _ identifier2: String?) -> Bool {
         switch (identifier1, identifier2) {
         case (nil, nil):
             return true
-        case (.Some, nil), (nil, .Some):
+        case (.some, nil), (nil, .some):
             return false
-        case (.Some(let id1), .Some(let id2)):
+        case (.some(let id1), .some(let id2)):
             return isSameIdentifier(id1, id2)
         }
     }
 
-    func assertSameOrder(uiTestViews: [UIView], _ tzTestViews: [UIView]) {
-        for (index, uiView) in uiTestViews.enumerate() {
+    func assertSameOrder(_ uiTestViews: [UIView], _ tzTestViews: [UIView]) {
+        for (index, uiView) in uiTestViews.enumerated() {
             let tzView = tzTestViews[index]
 
             let result: Bool

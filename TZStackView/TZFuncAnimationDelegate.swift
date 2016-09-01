@@ -9,22 +9,22 @@
 import Foundation
 import QuartzCore
 
-class TZFuncAnimationDelegate {
+class TZFuncAnimationDelegate: NSObject, CAAnimationDelegate {
     private var completionFunc: ((CAAnimation, Bool) -> ())?
     
-    init(completion: (CAAnimation, Bool) -> ()) {
+    init(completion: @escaping (CAAnimation, Bool) -> ()) {
         completionFunc = completion
     }
     
-    @objc func animationDidStart(anim: CAAnimation) {
+    @objc func animationDidStart(_ anim: CAAnimation) {
 
     }
     
-    @objc func animationDidStop(anim: CAAnimation, finished: Bool) {
+    @objc func animationDidStop(_ anim: CAAnimation, finished: Bool) {
         completionFunc?(anim, finished)
     }
     
-    func cancel(anim: CAAnimation) {
+    func cancel(_ anim: CAAnimation) {
         completionFunc?(anim, false)
         completionFunc = nil
     }

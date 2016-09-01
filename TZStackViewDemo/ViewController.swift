@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     //--------------------------------------------------------------------------
     var tzStackView: TZStackView!
 
-    let resetButton = UIButton(type: .System)
+    let resetButton = UIButton(type: .system)
     let instructionLabel = UILabel()
 
     var axisSegmentedControl: UISegmentedControl!
@@ -26,67 +26,67 @@ class ViewController: UIViewController {
     //--------------------------------------------------------------------------
     override func viewDidLoad() {
         super.viewDidLoad()
-        edgesForExtendedLayout = .None;
+        edgesForExtendedLayout = UIRectEdge();
 
-        view.backgroundColor = UIColor.blackColor()
+        view.backgroundColor = UIColor.black
         title = "TZStackView"
 
         tzStackView = TZStackView(arrangedSubviews: createViews())
         tzStackView.translatesAutoresizingMaskIntoConstraints = false
-        tzStackView.axis = .Vertical
-        tzStackView.distribution = .Fill
-        tzStackView.alignment = .Fill
+        tzStackView.axis = .vertical
+        tzStackView.distribution = .fill
+        tzStackView.alignment = .fill
         tzStackView.spacing = 15
         view.addSubview(tzStackView)
 
-        let toIBButton = UIButton(type: .System)
+        let toIBButton = UIButton(type: .system)
         toIBButton.translatesAutoresizingMaskIntoConstraints = false
-        toIBButton.setTitle("Storyboard Views", forState: .Normal)
-        toIBButton.addTarget(self, action: #selector(ViewController.toIB), forControlEvents: .TouchUpInside)
-        toIBButton.setContentCompressionResistancePriority(1000, forAxis: .Vertical)
-        toIBButton.setContentHuggingPriority(1000, forAxis: .Vertical)
+        toIBButton.setTitle("Storyboard Views", for: UIControlState())
+        toIBButton.addTarget(self, action: #selector(ViewController.toIB), for: .touchUpInside)
+        toIBButton.setContentCompressionResistancePriority(1000, for: .vertical)
+        toIBButton.setContentHuggingPriority(1000, for: .vertical)
         view.addSubview(toIBButton)
 
         instructionLabel.translatesAutoresizingMaskIntoConstraints = false
-        instructionLabel.font = UIFont.systemFontOfSize(15)
+        instructionLabel.font = UIFont.systemFont(ofSize: 15)
         instructionLabel.text = "Tap any of the boxes to set hidden=true"
-        instructionLabel.textColor = UIColor.whiteColor()
+        instructionLabel.textColor = UIColor.white
         instructionLabel.numberOfLines = 0
-        instructionLabel.setContentCompressionResistancePriority(900, forAxis: .Horizontal)
-        instructionLabel.setContentCompressionResistancePriority(1000, forAxis: .Vertical)
-        instructionLabel.setContentHuggingPriority(1000, forAxis: .Vertical)
+        instructionLabel.setContentCompressionResistancePriority(900, for: .horizontal)
+        instructionLabel.setContentCompressionResistancePriority(1000, for: .vertical)
+        instructionLabel.setContentHuggingPriority(1000, for: .vertical)
         view.addSubview(instructionLabel)
 
         resetButton.translatesAutoresizingMaskIntoConstraints = false
-        resetButton.setTitle("Reset", forState: .Normal)
-        resetButton.addTarget(self, action: #selector(ViewController.reset), forControlEvents: .TouchUpInside)
-        resetButton.setContentCompressionResistancePriority(1000, forAxis: .Horizontal)
-        resetButton.setContentHuggingPriority(1000, forAxis: .Horizontal)
+        resetButton.setTitle("Reset", for: UIControlState())
+        resetButton.addTarget(self, action: #selector(ViewController.reset), for: .touchUpInside)
+        resetButton.setContentCompressionResistancePriority(1000, for: .horizontal)
+        resetButton.setContentHuggingPriority(1000, for: .horizontal)
         view.addSubview(resetButton)
 
         axisSegmentedControl = UISegmentedControl(items: ["Vertical", "Horizontal"])
         axisSegmentedControl.selectedSegmentIndex = 0
-        axisSegmentedControl.addTarget(self, action: #selector(ViewController.axisChanged(_:)), forControlEvents: .ValueChanged)
-        axisSegmentedControl.setContentCompressionResistancePriority(1000, forAxis: .Vertical)
-        axisSegmentedControl.setContentHuggingPriority(1000, forAxis: .Vertical)
-        axisSegmentedControl.tintColor = UIColor.lightGrayColor()
+        axisSegmentedControl.addTarget(self, action: #selector(ViewController.axisChanged(_:)), for: .valueChanged)
+        axisSegmentedControl.setContentCompressionResistancePriority(1000, for: .vertical)
+        axisSegmentedControl.setContentHuggingPriority(1000, for: .vertical)
+        axisSegmentedControl.tintColor = UIColor.lightGray
 
         alignmentSegmentedControl = UISegmentedControl(items: ["Fill", "Center", "Leading", "Top", "Trailing", "Bottom", "FirstBaseline"])
         alignmentSegmentedControl.selectedSegmentIndex = 0
-        alignmentSegmentedControl.addTarget(self, action: #selector(ViewController.alignmentChanged(_:)), forControlEvents: .ValueChanged)
-        alignmentSegmentedControl.setContentCompressionResistancePriority(1000, forAxis: .Vertical)
-        alignmentSegmentedControl.setContentHuggingPriority(1000, forAxis: .Vertical)
-        alignmentSegmentedControl.tintColor = UIColor.lightGrayColor()
+        alignmentSegmentedControl.addTarget(self, action: #selector(ViewController.alignmentChanged(_:)), for: .valueChanged)
+        alignmentSegmentedControl.setContentCompressionResistancePriority(1000, for: .vertical)
+        alignmentSegmentedControl.setContentHuggingPriority(1000, for: .vertical)
+        alignmentSegmentedControl.tintColor = UIColor.lightGray
 
         distributionSegmentedControl = UISegmentedControl(items: ["Fill", "FillEqually", "FillProportionally", "EqualSpacing", "EqualCentering"])
         distributionSegmentedControl.selectedSegmentIndex = 0
-        distributionSegmentedControl.addTarget(self, action: #selector(ViewController.distributionChanged(_:)), forControlEvents: .ValueChanged)
-        distributionSegmentedControl.setContentCompressionResistancePriority(1000, forAxis: .Vertical)
-        distributionSegmentedControl.setContentHuggingPriority(1000, forAxis: .Vertical)
-        distributionSegmentedControl.tintColor = UIColor.lightGrayColor()
+        distributionSegmentedControl.addTarget(self, action: #selector(ViewController.distributionChanged(_:)), for: .valueChanged)
+        distributionSegmentedControl.setContentCompressionResistancePriority(1000, for: .vertical)
+        distributionSegmentedControl.setContentHuggingPriority(1000, for: .vertical)
+        distributionSegmentedControl.tintColor = UIColor.lightGray
 
         let controlsLayoutContainer = TZStackView(arrangedSubviews: [axisSegmentedControl, alignmentSegmentedControl, distributionSegmentedControl])
-        controlsLayoutContainer.axis = .Vertical
+        controlsLayoutContainer.axis = .vertical
         controlsLayoutContainer.translatesAutoresizingMaskIntoConstraints = false
         controlsLayoutContainer.spacing = 5
         view.addSubview(controlsLayoutContainer)
@@ -100,25 +100,25 @@ class ViewController: UIViewController {
         ]
 
         let metrics: [String:AnyObject] = [
-                "gap": 10,
-                "topspacing": 25
+                "gap": 10 as AnyObject,
+                "topspacing": 25 as AnyObject
         ]
 
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:[toIBButton]-gap-|",
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[toIBButton]-gap-|",
             options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-gap-[instructionLabel]-[resetButton]-gap-|",
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-gap-[instructionLabel]-[resetButton]-gap-|",
                 options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[tzStackView]|",
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tzStackView]|",
                 options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[controlsLayoutContainer]|",
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[controlsLayoutContainer]|",
                 options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
 
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-topspacing-[toIBButton]-gap-[instructionLabel]-gap-[controlsLayoutContainer]-gap-[tzStackView]|",
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-topspacing-[toIBButton]-gap-[instructionLabel]-gap-[controlsLayoutContainer]-gap-[tzStackView]|",
                 options: NSLayoutFormatOptions(rawValue: 0), metrics: metrics, views: views))
-        view.addConstraint(NSLayoutConstraint(item: instructionLabel, attribute: .CenterY, relatedBy: .Equal, toItem: resetButton, attribute: .CenterY, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: instructionLabel, attribute: .centerY, relatedBy: .equal, toItem: resetButton, attribute: .centerY, multiplier: 1, constant: 0))
     }
 
-    private func createViews() -> [UIView] {
+    fileprivate func createViews() -> [UIView] {
         let redView = ExplicitIntrinsicContentSizeView(intrinsicContentSize: CGSize(width: 100, height: 100), name: "Red")
         let greenView = ExplicitIntrinsicContentSizeView(intrinsicContentSize: CGSize(width: 80, height: 80), name: "Green")
         let blueView = ExplicitIntrinsicContentSizeView(intrinsicContentSize: CGSize(width: 60, height: 60), name: "Blue")
@@ -127,28 +127,28 @@ class ViewController: UIViewController {
         
         let views = [redView, greenView, blueView, purpleView, yellowView]
         
-        for (i, view) in views.enumerate() {
+        for (i, view) in views.enumerated() {
             let j = UILayoutPriority(i)
-            view.setContentCompressionResistancePriority(751 + j, forAxis: .Horizontal)
-            view.setContentCompressionResistancePriority(751 + j, forAxis: .Vertical)
-            view.setContentHuggingPriority(251 + j, forAxis: .Horizontal)
-            view.setContentHuggingPriority(251 + j, forAxis: .Vertical)
+            view.setContentCompressionResistancePriority(751 + j, for: .horizontal)
+            view.setContentCompressionResistancePriority(751 + j, for: .vertical)
+            view.setContentHuggingPriority(251 + j, for: .horizontal)
+            view.setContentHuggingPriority(251 + j, for: .vertical)
         }
 
-        redView.backgroundColor = UIColor.redColor().colorWithAlphaComponent(0.75)
-        greenView.backgroundColor = UIColor.greenColor().colorWithAlphaComponent(0.75)
-        blueView.backgroundColor = UIColor.blueColor().colorWithAlphaComponent(0.75)
-        purpleView.backgroundColor = UIColor.purpleColor().colorWithAlphaComponent(0.75)
-        yellowView.backgroundColor = UIColor.yellowColor().colorWithAlphaComponent(0.75)
+        redView.backgroundColor = UIColor.red.withAlphaComponent(0.75)
+        greenView.backgroundColor = UIColor.green.withAlphaComponent(0.75)
+        blueView.backgroundColor = UIColor.blue.withAlphaComponent(0.75)
+        purpleView.backgroundColor = UIColor.purple.withAlphaComponent(0.75)
+        yellowView.backgroundColor = UIColor.yellow.withAlphaComponent(0.75)
         return [redView, greenView, blueView, purpleView, yellowView]
     }
 
     //MARK: - Button Actions
     //--------------------------------------------------------------------------
     func reset() {
-        UIView.animateWithDuration(0.6, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .AllowUserInteraction, animations: {
+        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             for view in self.tzStackView.arrangedSubviews {
-                view.hidden = false
+                view.isHidden = false
             }
         }, completion: nil)
 
@@ -158,64 +158,64 @@ class ViewController: UIViewController {
         
         let storyboard = UIStoryboard(name: "Storyboard", bundle: nil)
         let viewController = storyboard.instantiateInitialViewController()!
-        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .Cancel, target: self, action: #selector(ViewController.backFromIB))
+        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .cancel, target: self, action: #selector(ViewController.backFromIB))
         
         let navController = UINavigationController(rootViewController: viewController)
         
-        presentViewController(navController, animated: true, completion: nil)
+        present(navController, animated: true, completion: nil)
         
     }
     
     func backFromIB() {
-        dismissViewControllerAnimated(true, completion:nil)
+        dismiss(animated: true, completion:nil)
     }
 
     //MARK: - Segmented Control Actions
     //--------------------------------------------------------------------------
-    func axisChanged(sender: UISegmentedControl) {
+    func axisChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            tzStackView.axis = .Vertical
+            tzStackView.axis = .vertical
         default:
-            tzStackView.axis = .Horizontal
+            tzStackView.axis = .horizontal
         }
     }
 
-    func alignmentChanged(sender: UISegmentedControl) {
+    func alignmentChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            tzStackView.alignment = .Fill
+            tzStackView.alignment = .fill
         case 1:
-            tzStackView.alignment = .Center
+            tzStackView.alignment = .center
         case 2:
-            tzStackView.alignment = .Leading
+            tzStackView.alignment = .leading
         case 3:
-            tzStackView.alignment = .Top
+            tzStackView.alignment = .top
         case 4:
-            tzStackView.alignment = .Trailing
+            tzStackView.alignment = .trailing
         case 5:
-            tzStackView.alignment = .Bottom
+            tzStackView.alignment = .bottom
         default:
-            tzStackView.alignment = .FirstBaseline
+            tzStackView.alignment = .firstBaseline
         }
     }
 
-    func distributionChanged(sender: UISegmentedControl) {
+    func distributionChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            tzStackView.distribution = .Fill
+            tzStackView.distribution = .fill
         case 1:
-            tzStackView.distribution = .FillEqually
+            tzStackView.distribution = .fillEqually
         case 2:
-            tzStackView.distribution = .FillProportionally
+            tzStackView.distribution = .fillProportionally
         case 3:
-            tzStackView.distribution = .EqualSpacing
+            tzStackView.distribution = .equalSpacing
         default:
-            tzStackView.distribution = .EqualCentering
+            tzStackView.distribution = .equalCentering
         }
     }
 
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }

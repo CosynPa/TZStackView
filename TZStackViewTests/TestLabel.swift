@@ -14,7 +14,7 @@ class TestLabel: UILabel {
     
     init(identifier: String) {
         self.identifier = identifier
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
     }
 
     required init?(coder aDecoder: NSCoder) {

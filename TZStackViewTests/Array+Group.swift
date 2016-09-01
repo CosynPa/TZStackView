@@ -9,7 +9,7 @@
 import Foundation
 
 extension Array {
-    func groupBy<Key: Hashable>(keyFunc: Element -> Key) -> [Key: [Element]] {
+    func groupBy<Key: Hashable>(_ keyFunc: (Element) -> Key) -> [Key: [Element]] {
         var result = [Key: [Element]]()
         for element in self {
             let key = keyFunc(element)

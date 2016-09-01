@@ -15,14 +15,14 @@ class TZStackViewTests: TZStackViewTestCase {
     func createTestViewWithHiddenFuncs() -> [(createViewsFunc: () -> [UIView], description: String)] {
         let viewsCount = 3
         
-        let hiddenOptions = [[Bool]](count: viewsCount, repeatedValue: [false, true])
-            .reduce([[]], combine: *+)
+        let hiddenOptions = [[Bool]](repeating: [false, true], count: viewsCount)
+            .reduce([[]], *+)
         
         return hiddenOptions.map { anHiddenOption -> (createViewsFunc: () -> [UIView], description: String) in
             let createViewFunc = { () -> [UIView] in
-                let views = anHiddenOption.enumerate().map { (viewIndex, hidden) -> UIView in
+                let views = anHiddenOption.enumerated().map { (viewIndex, hidden) -> UIView in
                     let aView = TestView(index: viewIndex, size: CGSize(width: 100 * (viewIndex + 1), height: 100 * (viewIndex + 1)))
-                    aView.hidden = hidden
+                    aView.isHidden = hidden
                     
                     return aView
                 }
@@ -38,15 +38,15 @@ class TZStackViewTests: TZStackViewTestCase {
     func createTestLabelFuncs() -> [(createViewsFunc: () -> [UIView], description: String)] {
         let labelsCount = 3
         
-        let numberOfLinesOptions = [[Int]](count: labelsCount, repeatedValue: [1, 0])
-            .reduce([[]], combine: *+)
+        let numberOfLinesOptions = [[Int]](repeating: [1, 0], count: labelsCount)
+            .reduce([[]], *+)
         
         return numberOfLinesOptions.map { anOptions -> (createViewsFunc: () -> [UIView], description: String) in
             let createViewFunc = { () -> [UIView] in
-                let labels = anOptions.enumerate().map { (viewIndex, numberOfLines) -> UILabel in
+                let labels = anOptions.enumerated().map { (viewIndex, numberOfLines) -> UILabel in
                     let label = TestLabel(identifier: String(viewIndex))
                     
-                    let text = String(count: viewIndex + 1, repeatedValue: Character("a"))
+                    let text = String(repeating: "a", count: viewIndex + 1)
                     label.text = text
                     
                     label.numberOfLines = numberOfLines
@@ -65,25 +65,25 @@ class TZStackViewTests: TZStackViewTestCase {
     func testSameConstraints() {
         let margins = [false, true]
         let axes = [
-            (UILayoutConstraintAxis.Horizontal, "Horizontal"),
-            (.Vertical, "Vertical")
+            (UILayoutConstraintAxis.horizontal, "Horizontal"),
+            (.vertical, "Vertical")
         ]
         let distributions = [
-            (UIStackViewDistribution.Fill, TZStackViewDistribution.Fill, "Fill"),
-            (.FillEqually, .FillEqually, "FillEqually"),
-            (.FillProportionally, .FillProportionally, "FillProportionally"),
-            (.EqualSpacing, .EqualSpacing, "EqualSpacing"),
-            (.EqualCentering, .EqualCentering, "EqualCentering")
+            (UIStackViewDistribution.fill, TZStackViewDistribution.fill, "fill"),
+            (.fillEqually, .fillEqually, "fillEqually"),
+            (.fillProportionally, .fillProportionally, "fillProportionally"),
+            (.equalSpacing, .equalSpacing, "equalSpacing"),
+            (.equalCentering, .equalCentering, "equalCentering")
         ]
         let alignments = [
-            (UIStackViewAlignment.Fill, TZStackViewAlignment.Fill, "Fill"),
-            (.Leading, .Leading, "Leading"),
-            (UIStackViewAlignment.Top, TZStackViewAlignment.Top, "Top"),
-            (.FirstBaseline, .FirstBaseline, "FirstBaseline"),
-            (.Center, .Center, "Center"),
-            (.Trailing, .Trailing, "Trailing"),
-            (UIStackViewAlignment.Bottom, TZStackViewAlignment.Bottom, "Bottom"),
-            (.LastBaseline, .LastBaseline, "LastBaseline"),
+            (UIStackViewAlignment.fill, TZStackViewAlignment.fill, "fill"),
+            (.leading, .leading, "leading"),
+            (UIStackViewAlignment.top, TZStackViewAlignment.top, "top"),
+            (.firstBaseline, .firstBaseline, "firstBaseline"),
+            (.center, .center, "center"),
+            (.trailing, .trailing, "trailing"),
+            (UIStackViewAlignment.bottom, TZStackViewAlignment.bottom, "bottom"),
+            (.lastBaseline, .lastBaseline, "lastBaseline"),
         ]
         let spacings = [CGFloat(10)]
         let subviews = [(createViewsFunc: createTestViews, description: "")]
@@ -106,8 +106,8 @@ class TZStackViewTests: TZStackViewTestCase {
             
             uiStackView.layoutMargins = UIEdgeInsets()
             tzStackView.layoutMargins = UIEdgeInsets()
-            uiStackView.layoutMarginsRelativeArrangement = margin
-            tzStackView.layoutMarginsRelativeArrangement = margin
+            uiStackView.isLayoutMarginsRelativeArrangement = margin
+            tzStackView.isLayoutMarginsRelativeArrangement = margin
             
             uiStackView.axis = axis.0
             tzStackView.axis = axis.0
@@ -128,12 +128,12 @@ class TZStackViewTests: TZStackViewTestCase {
     func testFillHorizontalFill() {
         recreateStackViews(createTestViews)
         
-        uiStackView.axis = .Horizontal
-        uiStackView.distribution = .Fill
-        uiStackView.alignment = .Fill
-        tzStackView.axis = .Horizontal
-        tzStackView.distribution = .Fill
-        tzStackView.alignment = .Fill
+        uiStackView.axis = .horizontal
+        uiStackView.distribution = .fill
+        uiStackView.alignment = .fill
+        tzStackView.axis = .horizontal
+        tzStackView.distribution = .fill
+        tzStackView.alignment = .fill
         
         uiStackView.spacing = 10
         tzStackView.spacing = 10
@@ -143,37 +143,37 @@ class TZStackViewTests: TZStackViewTestCase {
     
     func createVariousIntrinsicSizeViewFuncs() -> [(createViewsFunc: () -> [UIView], description: String)] {
         enum Option: CustomStringConvertible {
-            case Hidden
-            case Length(CGFloat)
+            case hidden
+            case length(CGFloat)
             
             var description: String {
                 switch self {
-                case .Hidden:
+                case .hidden:
                     return "hidden"
-                case .Length(let length):
-                    return String(length)
+                case .length(let length):
+                    return String(describing: length)
                 }
             }
         }
         
-        let lengths = [UIViewNoIntrinsicMetric] + [0, 1] + Array(CGFloat(5).stride(through: 25, by: 5))
+        let lengths = [UIViewNoIntrinsicMetric] + [0, 1] + Array(stride(from: CGFloat(5), through: 25, by: 5))
         let possibleOptions = lengths
-            .map { length in Option.Length(length) }
-            + [Option.Hidden]
+            .map { length in Option.length(length) }
+            + [Option.hidden]
         
         return (0 ... 3).flatMap { viewCount -> [(createViewsFunc: () -> [UIView], description: String)] in
-            let sizeAndHiddenOptions = [[Option]](count: viewCount, repeatedValue: possibleOptions)
-                .reduce([[]], combine: *+)
+            let sizeAndHiddenOptions = [[Option]](repeating: possibleOptions, count: viewCount)
+                .reduce([[]], *+)
             
             return sizeAndHiddenOptions.map { anOptions -> (createViewsFunc: () -> [UIView], description: String) in
                 let createViewFunc = { () -> [UIView] in
-                    let views = anOptions.enumerate().map { (viewIndex, oneViewOption) -> UIView in
+                    let views = anOptions.enumerated().map { (viewIndex, oneViewOption) -> UIView in
                         let view: TestView
                         switch oneViewOption {
-                        case .Hidden:
+                        case .hidden:
                             view = TestView(index: viewIndex, size: CGSize(width: UIViewNoIntrinsicMetric, height: UIViewNoIntrinsicMetric))
-                            view.hidden = true
-                        case .Length(let length):
+                            view.isHidden = true
+                        case .length(let length):
                             view = TestView(index: viewIndex, size: CGSize(width: length, height: length))
                         }
                         
@@ -205,17 +205,17 @@ class TZStackViewTests: TZStackViewTestCase {
             
             uiStackView.layoutMargins = UIEdgeInsets()
             tzStackView.layoutMargins = UIEdgeInsets()
-            uiStackView.layoutMarginsRelativeArrangement = margin
-            tzStackView.layoutMarginsRelativeArrangement = margin
+            uiStackView.isLayoutMarginsRelativeArrangement = margin
+            tzStackView.isLayoutMarginsRelativeArrangement = margin
             
-            uiStackView.axis = .Horizontal
-            tzStackView.axis = .Horizontal
+            uiStackView.axis = .horizontal
+            tzStackView.axis = .horizontal
             
-            uiStackView.distribution = .FillProportionally
-            tzStackView.distribution = .FillProportionally
+            uiStackView.distribution = .fillProportionally
+            tzStackView.distribution = .fillProportionally
             
-            uiStackView.alignment = .Fill
-            tzStackView.alignment = .Fill
+            uiStackView.alignment = .fill
+            tzStackView.alignment = .fill
             
             uiStackView.spacing = 10
             tzStackView.spacing = 10
@@ -257,7 +257,7 @@ class TZStackViewTests: TZStackViewTestCase {
         recreateStackViews(createTestViews)
         
         let uiTestView = TestView(index: -1, size: CGSize(width: 100, height: 100))
-        uiStackView.insertArrangedSubview(uiTestView, atIndex: 0)
+        uiStackView.insertArrangedSubview(uiTestView, at: 0)
 
         let tzTestView = TestView(index: -1, size: CGSize(width: 100, height: 100))
         tzStackView.insertArrangedSubview(tzTestView, atIndex: 0)
